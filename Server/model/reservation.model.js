@@ -31,5 +31,4 @@ const ReservationSchema = new mongoose.Schema(
 );
 
 const ReservationModel = mongoose.model("reservations", ReservationSchema);
-console.log("Reservation Created Successfully", ReservationModel);
 module.exports = ReservationModel;

@@ -20,7 +20,7 @@ app.use(
   })
 );
 
-// ⚠️ IMPORTANT: Webhook route MUST come BEFORE express.json() middleware
+// IMPORTANT: Webhook route MUST come BEFORE express.json() middleware
 // This ensures the raw body is preserved for Stripe signature verification
 app.use(
   "/reservation/stripe-webhook",
@@ -28,12 +28,11 @@ app.use(
     type: "application/json",
     limit: "10mb", // Increase limit if needed
   }),
-  (req, res, next) => {
-    // Ensure the body is preserved as raw bytes
+  (req, _, next) => {
     if (req.body && req.body.constructor === Buffer) {
-      console.log("✅ Raw body preserved correctly for webhook");
+      console.log("Raw body preserved correctly for webhook");
     } else {
-      console.error("❌ Body is not a Buffer:", typeof req.body);
+      console.error("Body is not a Buffer:", typeof req.body);
     }
     next();
   }

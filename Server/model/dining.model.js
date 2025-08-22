@@ -17,5 +17,4 @@ const DiningSchema = new mongoose.Schema(
 );
 
 const DiningModel = mongoose.model("dinings", DiningSchema);
-console.log("Dining created successfully", DiningModel);
 module.exports = DiningModel;

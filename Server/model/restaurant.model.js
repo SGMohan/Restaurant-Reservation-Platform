@@ -15,5 +15,4 @@ const RestaurantSchema = new mongoose.Schema(
 );
 
 const RestaurantModel = mongoose.model("restaurants", RestaurantSchema);
-console.log("Restaurant created successfully", RestaurantModel);
 module.exports = RestaurantModel;

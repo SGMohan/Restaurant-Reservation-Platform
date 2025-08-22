@@ -63,5 +63,4 @@ const UserSchema = new mongoose.Schema(
 );
 
 const UserModel = mongoose.model("users", UserSchema);
-console.log("User created successfully", UserModel);
 module.exports = UserModel;

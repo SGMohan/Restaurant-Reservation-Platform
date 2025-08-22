@@ -37,5 +37,4 @@ const ReviewSchema = new mongoose.Schema(
 
 
 const ReviewModel = mongoose.model("reviews", ReviewSchema);
-console.log("Review Created Successfully", ReviewModel)
 module.exports = ReviewModel;

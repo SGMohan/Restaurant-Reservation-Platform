@@ -50,7 +50,7 @@ ReservationRouter.post("/stripe-payment", verifyToken, async (req, res) => {
       payment_method_types: ["card"],
       mode: "payment",
 
-      // ✅ SOLUTION: Specify locale explicitly to avoid translation errors
+      // SOLUTION: Specify locale explicitly to avoid translation errors
       locale: "en", // or "auto" for automatic detection
 
       success_url: `${process.env.FRONTEND_URL}/my-bookings?payment_success=true&session_id={CHECKOUT_SESSION_ID}`,
@@ -59,7 +59,7 @@ ReservationRouter.post("/stripe-payment", verifyToken, async (req, res) => {
       customer_email: req.user.email,
       client_reference_id: bookingId,
 
-      // ✅ IMPROVED: Better line item configuration
+      // IMPROVED: Better line item configuration
       line_items: [
         {
           price_data: {
@@ -81,7 +81,7 @@ ReservationRouter.post("/stripe-payment", verifyToken, async (req, res) => {
         },
       ],
 
-      // ✅ ENHANCED: Better metadata
+      //ENHANCED: Better metadata
       metadata: {
         bookingId: bookingId.toString(),
         userId: userId.toString(),
@@ -90,13 +90,13 @@ ReservationRouter.post("/stripe-payment", verifyToken, async (req, res) => {
         guests: booking.guests.toString(),
       },
 
-      // ✅ OPTIONAL: Custom checkout appearance
+      // OPTIONAL: Custom checkout appearance
       ui_mode: "hosted", // Explicitly set to hosted mode
 
-      // ✅ OPTIONAL: Automatic tax calculation (if needed)
+      // OPTIONAL: Automatic tax calculation (if needed)
       // automatic_tax: { enabled: false },
 
-      // ✅ ENHANCED: Better success/cancel handling
+      // ENHANCED: Better success/cancel handling
       allow_promotion_codes: false, // Disable promo codes if not needed
     });
 
@@ -118,7 +118,7 @@ ReservationRouter.post("/stripe-payment", verifyToken, async (req, res) => {
 // Stripe webhook handler for payment confirmation
 ReservationRouter.post(
   "/stripe-webhook",
-  // ✅ REMOVED express.raw here since it's handled in app.js
+  //REMOVED express.raw here since it's handled in app.js
   async (req, res) => {
     console.log("Webhook received at:", new Date().toISOString());
 
@@ -126,27 +126,27 @@ ReservationRouter.post(
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     // Debug logging
-    console.log("Stripe-Signature header:", sig ? "Present" : "MISSING");
-    console.log("Webhook secret exists:", !!webhookSecret);
-    console.log("Raw body type:", typeof req.body);
-    console.log("Raw body length:", req.body?.length || 0);
-    console.log("Raw body is Buffer:", Buffer.isBuffer(req.body));
+    // console.log("Stripe-Signature header:", sig ? "Present" : "MISSING");
+    // console.log("Webhook secret exists:", !!webhookSecret);
+    // console.log("Raw body type:", typeof req.body);
+    // console.log("Raw body length:", req.body?.length || 0);
+    // console.log("Raw body is Buffer:", Buffer.isBuffer(req.body));
 
-    // ✅ ENHANCED ERROR HANDLING
+    // ENHANCED ERROR HANDLING
     if (!webhookSecret) {
-      console.error("❌ STRIPE_WEBHOOK_SECRET not configured");
+      console.error("STRIPE_WEBHOOK_SECRET not configured");
       return res.status(500).json({ error: "Webhook secret not configured" });
     }
 
     if (!sig) {
-      console.error("❌ Missing Stripe-Signature header");
+      console.error("Missing Stripe-Signature header");
       return res.status(400).json({ error: "Missing signature header" });
     }
 
-    // ✅ STRICT BODY VALIDATION
+    // STRICT BODY VALIDATION
     if (!req.body || !Buffer.isBuffer(req.body)) {
       console.error(
-        "❌ Invalid body type for webhook. Expected Buffer, got:",
+        "Invalid body type for webhook. Expected Buffer, got:",
         typeof req.body
       );
       return res
@@ -155,18 +155,18 @@ ReservationRouter.post(
     }
 
     if (req.body.length === 0) {
-      console.error("❌ Empty webhook body");
+      console.error("Empty webhook body");
       return res.status(400).json({ error: "Empty webhook payload" });
     }
 
     let event;
     try {
-      // ✅ IMPROVED: Construct event with explicit verification
+      //IMPROVED: Construct event with explicit verification
       event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-      console.log("✅ Webhook verified successfully:", event.type, event.id);
+      console.log("Webhook verified successfully:", event.type, event.id);
     } catch (err) {
-      console.error("❌ Webhook verification failed:", err.message);
-      console.error("❌ Error details:", {
+      console.error("Webhook verification failed:", err.message);
+      console.error("Error details:", {
         name: err.name,
         type: err.type,
         message: err.message,
@@ -186,7 +186,7 @@ ReservationRouter.post(
             session.metadata?.bookingId || session.client_reference_id;
 
           if (!bookingId) {
-            console.error("❌ No booking ID found in session metadata");
+            console.error("No booking ID found in session metadata");
             return res
               .status(400)
               .json({ error: "No booking ID found in session" });
@@ -196,13 +196,13 @@ ReservationRouter.post(
 
           const booking = await ReservationModel.findById(bookingId);
           if (!booking) {
-            console.error("❌ Booking not found:", bookingId);
+            console.error("Booking not found:", bookingId);
             return res.status(404).json({ error: "Booking not found" });
           }
 
-          // ✅ PREVENT DOUBLE PROCESSING
+          //PREVENT DOUBLE PROCESSING
           if (booking.isPaid && booking.stripeSessionId === session.id) {
-            console.log("✅ Booking already processed for this session");
+            console.log("Booking already processed for this session");
             return res.json({ received: true, message: "Already processed" });
           }
 
@@ -214,7 +214,7 @@ ReservationRouter.post(
           booking.stripeSessionId = session.id;
           await booking.save();
 
-          console.log("✅ Booking updated successfully:", booking._id);
+          console.log("Booking updated successfully:", booking._id);
 
           // Optional: Send confirmation email
           try {
@@ -263,11 +263,10 @@ ReservationRouter.post(
                   </div>
                 `,
               });
-              console.log("✅ Payment confirmation email sent");
             }
           } catch (emailError) {
             console.error(
-              "❌ Failed to send payment confirmation email:",
+              "Failed to send payment confirmation email:",
               emailError.message
             );
             // Don't fail the webhook for email errors
@@ -275,15 +274,15 @@ ReservationRouter.post(
           break;
 
         case "payment_intent.succeeded":
-          console.log("ℹ️ Payment intent succeeded:", event.data.object.id);
+          console.log("Payment intent succeeded:", event.data.object.id);
           // Handle if needed
           break;
 
         default:
-          console.log("ℹ️ Unhandled event type:", event.type);
+          console.log("Unhandled event type:", event.type);
       }
 
-      // ✅ ALWAYS respond with success to acknowledge receipt
+      //ALWAYS respond with success to acknowledge receipt
       res.json({
         received: true,
         processed: true,
@@ -291,7 +290,7 @@ ReservationRouter.post(
         eventId: event.id,
       });
     } catch (error) {
-      console.error("❌ Error processing webhook:", error);
+      console.error("Error processing webhook:", error);
       res.status(500).json({
         error: "Internal server error",
         details: error.message,
@@ -517,8 +516,6 @@ ReservationRouter.post("/reserve", verifyToken, async (req, res) => {
             </div>
           `,
       });
-
-      console.log("Confirmation email sent successfully to:", recipientEmail);
     } catch (emailError) {
       console.error("Failed to send confirmation email:", emailError.message);
     }
