@@ -43,7 +43,7 @@ ReviewRouter.post(
       const hasReservation = await ReservationModel.findOne({
         user: req.user._id,
         dining: dining,
-        status: "Completed",
+        status: "Confirmed",
       });
 
       if (!hasReservation) {
