@@ -46,7 +46,7 @@ import groupIcon from "./groupIcon.svg";
 import fineDiningIcon from "./fineDiningIcon.svg";
 import veganIcon from "./veganIcon.svg";
 import birthdayIcon from "./birthdayIcon.svg";
-import cocktailIcon from "./cocktailicon.svg";
+import cocktailIcon from "./cocktailIcon.svg";
 import sunsetViewIcon from "./sunsetViewIcon.svg";
 import loungeIcon from "./loungeIcon.svg";
 import liveCounterIcon from "./liveCounterIcon.svg";
