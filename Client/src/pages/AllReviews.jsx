@@ -523,7 +523,7 @@ const AllReviews = () => {
         </button>
         <button
           type="submit"
-          className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:cursor-pointer"
           disabled={!formData.comment || !formData.rating}
         >
           {isEditing ? "Update" : "Submit"}
