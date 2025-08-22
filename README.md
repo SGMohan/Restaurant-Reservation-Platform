@@ -351,12 +351,4 @@ Create `Client/public/_redirects`:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
-
-**SGMohan**
-- GitHub: [@SGMohan](https://github.com/SGMohan)
-- Project Link: [Restaurant Reservation Platform](https://github.com/SGMohan/Restaurant-Reservation-Platform)
-
----
-
 **Built with ❤️ using the MERN stack**
