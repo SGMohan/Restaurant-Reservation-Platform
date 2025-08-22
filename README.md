@@ -1,4 +1,4 @@
-# 🍽️ Restaurant Reservation Platform
+# 🍴 Restaurant Reservation Platform
 
 ![MongoDB](https://img.shields.io/badge/MongoDB-5.0+-47A248?logo=mongodb&logoColor=white)
 ![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=white)
