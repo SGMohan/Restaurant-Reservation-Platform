@@ -116,13 +116,12 @@ ReservationRouter.post("/stripe-payment", verifyToken, async (req, res) => {
 
 
 // Stripe webhook handler for payment confirmation
-// Stripe webhook handler for payment confirmation
 ReservationRouter.post(
   "/stripe-webhook",
-  express.raw({ type: "application/json" }),
+  // ✅ REMOVED express.raw here since it's handled in app.js
   async (req, res) => {
     console.log("Webhook received at:", new Date().toISOString());
-    
+
     const sig = req.headers["stripe-signature"];
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -133,6 +132,7 @@ ReservationRouter.post(
     console.log("Raw body length:", req.body?.length || 0);
     console.log("Raw body is Buffer:", Buffer.isBuffer(req.body));
 
+    // ✅ ENHANCED ERROR HANDLING
     if (!webhookSecret) {
       console.error("❌ STRIPE_WEBHOOK_SECRET not configured");
       return res.status(500).json({ error: "Webhook secret not configured" });
@@ -143,109 +143,159 @@ ReservationRouter.post(
       return res.status(400).json({ error: "Missing signature header" });
     }
 
-    // Ensure we have a proper raw body
-    if (!req.body || (!Buffer.isBuffer(req.body) && typeof req.body !== 'string')) {
-      console.error("❌ Invalid body type for webhook");
-      return res.status(400).json({ error: "Invalid webhook payload" });
+    // ✅ STRICT BODY VALIDATION
+    if (!req.body || !Buffer.isBuffer(req.body)) {
+      console.error(
+        "❌ Invalid body type for webhook. Expected Buffer, got:",
+        typeof req.body
+      );
+      return res
+        .status(400)
+        .json({ error: "Invalid webhook payload - body must be raw buffer" });
+    }
+
+    if (req.body.length === 0) {
+      console.error("❌ Empty webhook body");
+      return res.status(400).json({ error: "Empty webhook payload" });
     }
 
     let event;
     try {
-      // Construct the event using the raw body
+      // ✅ IMPROVED: Construct event with explicit verification
       event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-      console.log("✅ Webhook verified:", event.type, event.id);
+      console.log("✅ Webhook verified successfully:", event.type, event.id);
     } catch (err) {
       console.error("❌ Webhook verification failed:", err.message);
+      console.error("❌ Error details:", {
+        name: err.name,
+        type: err.type,
+        message: err.message,
+      });
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     // Handle the event
     try {
-      if (event.type === "checkout.session.completed") {
-        console.log("Processing checkout.session.completed event...");
-        const session = event.data.object;
-        
-        // Extract booking ID from metadata or client_reference_id
-        const bookingId = session.metadata?.bookingId || session.client_reference_id;
-        
-        if (!bookingId) {
-          console.error("No booking ID found in session");
-          return res.status(400).json({ error: "No booking ID" });
-        }
+      switch (event.type) {
+        case "checkout.session.completed":
+          console.log("Processing checkout.session.completed event...");
+          const session = event.data.object;
 
-        const booking = await ReservationModel.findById(bookingId);
-        if (!booking) {
-          console.error("Booking not found:", bookingId);
-          return res.status(404).json({ error: "Booking not found" });
-        }
+          // Extract booking ID from metadata or client_reference_id
+          const bookingId =
+            session.metadata?.bookingId || session.client_reference_id;
 
-        // Update booking
-        booking.isPaid = true;
-        booking.status = "Confirmed";
-        booking.paymentMethod = "stripe";
-        booking.paymentDate = new Date();
-        booking.stripeSessionId = session.id; // Store session ID for reference
-        await booking.save();
-
-        console.log("✅ Booking updated successfully:", booking._id);
-
-        // Optional: Send confirmation email
-        try {
-          const populatedBooking = await ReservationModel.findById(bookingId)
-            .populate({
-              path: "dining",
-              populate: { path: "restaurant" }
-            })
-            .populate("user", "name email");
-
-          if (populatedBooking && populatedBooking.user?.email) {
-            await sendEmail({
-              from: {
-                name: "DineArea",
-                address: process.env.EMAIL_USER,
-              },
-              to: populatedBooking.user.email,
-              subject: `Payment Confirmed - ${populatedBooking.dining.restaurant.name}`,
-              html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                  <h2 style="color: #333;">Payment Confirmed!</h2>
-                  <p>Hi ${populatedBooking.user.name},</p>
-                  <p>Your payment has been successfully processed and your booking is now confirmed!</p>
-                  
-                  <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                    <h3 style="margin-top: 0;">Booking Details:</h3>
-                    <p><strong>Restaurant:</strong> ${populatedBooking.dining.restaurant.name}</p>
-                    <p><strong>Date & Time:</strong> ${new Date(populatedBooking.reservationDateTime).toLocaleString()}</p>
-                    <p><strong>Guests:</strong> ${populatedBooking.guests}</p>
-                    <p><strong>Total Paid:</strong> ₹${populatedBooking.totalPrice}</p>
-                    <p><strong>Status:</strong> Confirmed</p>
-                  </div>
-                  
-                  <p>Thank you for choosing us!</p>
-                  
-                  <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-                  <p style="color: #666; font-size: 12px;">
-                    This is an automated message. Please do not reply to this email.
-                  </p>
-                </div>
-              `,
-            });
-            console.log("✅ Payment confirmation email sent");
+          if (!bookingId) {
+            console.error("❌ No booking ID found in session metadata");
+            return res
+              .status(400)
+              .json({ error: "No booking ID found in session" });
           }
-        } catch (emailError) {
-          console.error("Failed to send payment confirmation email:", emailError.message);
-          // Don't fail the webhook for email errors
-        }
 
-      } else {
-        console.log("ℹ️ Event type not handled:", event.type);
+          console.log("Processing booking ID:", bookingId);
+
+          const booking = await ReservationModel.findById(bookingId);
+          if (!booking) {
+            console.error("❌ Booking not found:", bookingId);
+            return res.status(404).json({ error: "Booking not found" });
+          }
+
+          // ✅ PREVENT DOUBLE PROCESSING
+          if (booking.isPaid && booking.stripeSessionId === session.id) {
+            console.log("✅ Booking already processed for this session");
+            return res.json({ received: true, message: "Already processed" });
+          }
+
+          // Update booking
+          booking.isPaid = true;
+          booking.status = "Confirmed";
+          booking.paymentMethod = "stripe";
+          booking.paymentDate = new Date();
+          booking.stripeSessionId = session.id;
+          await booking.save();
+
+          console.log("✅ Booking updated successfully:", booking._id);
+
+          // Optional: Send confirmation email
+          try {
+            const populatedBooking = await ReservationModel.findById(bookingId)
+              .populate({
+                path: "dining",
+                populate: { path: "restaurant" },
+              })
+              .populate("user", "name email");
+
+            if (populatedBooking?.user?.email) {
+              await sendEmail({
+                from: {
+                  name: "DineArea",
+                  address: process.env.EMAIL_USER,
+                },
+                to: populatedBooking.user.email,
+                subject: `Payment Confirmed - ${populatedBooking.dining.restaurant.name}`,
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #333;">Payment Confirmed!</h2>
+                    <p>Hi ${populatedBooking.user.name},</p>
+                    <p>Your payment has been successfully processed and your booking is now confirmed!</p>
+                    
+                    <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                      <h3 style="margin-top: 0;">Booking Details:</h3>
+                      <p><strong>Restaurant:</strong> ${
+                        populatedBooking.dining.restaurant.name
+                      }</p>
+                      <p><strong>Date & Time:</strong> ${new Date(
+                        populatedBooking.reservationDateTime
+                      ).toLocaleString()}</p>
+                      <p><strong>Guests:</strong> ${populatedBooking.guests}</p>
+                      <p><strong>Total Paid:</strong> ₹${
+                        populatedBooking.totalPrice
+                      }</p>
+                      <p><strong>Status:</strong> Confirmed</p>
+                    </div>
+                    
+                    <p>Thank you for choosing us!</p>
+                    
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                    <p style="color: #666; font-size: 12px;">
+                      This is an automated message. Please do not reply to this email.
+                    </p>
+                  </div>
+                `,
+              });
+              console.log("✅ Payment confirmation email sent");
+            }
+          } catch (emailError) {
+            console.error(
+              "❌ Failed to send payment confirmation email:",
+              emailError.message
+            );
+            // Don't fail the webhook for email errors
+          }
+          break;
+
+        case "payment_intent.succeeded":
+          console.log("ℹ️ Payment intent succeeded:", event.data.object.id);
+          // Handle if needed
+          break;
+
+        default:
+          console.log("ℹ️ Unhandled event type:", event.type);
       }
 
-      // Always respond with success to acknowledge receipt
-      res.json({ received: true });
+      // ✅ ALWAYS respond with success to acknowledge receipt
+      res.json({
+        received: true,
+        processed: true,
+        eventType: event.type,
+        eventId: event.id,
+      });
     } catch (error) {
-      console.error("Error processing webhook:", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error("❌ Error processing webhook:", error);
+      res.status(500).json({
+        error: "Internal server error",
+        details: error.message,
+      });
     }
   }
 );

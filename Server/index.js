@@ -24,8 +24,21 @@ app.use(
 // This ensures the raw body is preserved for Stripe signature verification
 app.use(
   "/reservation/stripe-webhook",
-  express.raw({ type: "application/json" })
+  express.raw({
+    type: "application/json",
+    limit: "10mb", // Increase limit if needed
+  }),
+  (req, res, next) => {
+    // Ensure the body is preserved as raw bytes
+    if (req.body && req.body.constructor === Buffer) {
+      console.log("✅ Raw body preserved correctly for webhook");
+    } else {
+      console.error("❌ Body is not a Buffer:", typeof req.body);
+    }
+    next();
+  }
 );
+
 
 // Regular JSON middleware for all other routes
 app.use(express.json());
