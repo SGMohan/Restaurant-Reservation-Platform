@@ -94,7 +94,7 @@ npm install
 #### Backend (.env in Server directory)
 ```env
 # Database Configuration
-MONGO_URI=mongodb://localhost:27017/restaurant-reservation
+MONGO_URI=localhost:27017
 
 # JWT Authentication
 JWT_SECRET=your-super-secret-jwt-key-here
