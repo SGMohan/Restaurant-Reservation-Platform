@@ -1,4 +1,4 @@
-# 🍽️ Restaurant Reservation Platform
+# 🍴 Restaurant Reservation Platform
 
 ![MongoDB](https://img.shields.io/badge/MongoDB-5.0+-47A248?logo=mongodb&logoColor=white)
 ![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=white)
@@ -94,7 +94,7 @@ npm install
 #### Backend (.env in Server directory)
 ```env
 # Database Configuration
-MONGO_URI=mongodb://localhost:27017/restaurant-reservation
+MONGO_URI=localhost:27017
 
 # JWT Authentication
 JWT_SECRET=your-super-secret-jwt-key-here
@@ -350,13 +350,5 @@ Create `Client/public/_redirects`:
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 Author
-
-**SGMohan**
-- GitHub: [@SGMohan](https://github.com/SGMohan)
-- Project Link: [Restaurant Reservation Platform](https://github.com/SGMohan/Restaurant-Reservation-Platform)
-
----
 
 **Built with ❤️ using the MERN stack**
