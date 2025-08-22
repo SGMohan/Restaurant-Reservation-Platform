@@ -10,8 +10,8 @@
 A complete restaurant reservation solution with real-time booking, payment processing, and role-based dashboards built with MERN stack.
 
 ## 🌐 Live Demos
-- **Frontend**: [restaurant-platform.netlify.app](https://restaurant-platform.netlify.app)
-- **Backend API**: [restaurant-api.onrender.com](https://restaurant-api.onrender.com)
+- **Frontend**: [restaurant-platform.netlify.app](https://dinearea.netlify.app)
+- **Backend API**: [restaurant-api.onrender.com]([https://restaurant-api.onrender.com](https://restaurant-reservation-platform.onrender.com))
 
 ## 📌 Table of Contents
 - [Features](#✨-features)
@@ -169,11 +169,22 @@ stripe listen --forward-to localhost:5000/api/reservation/stripe-webhook
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/restaurant` | Get all restaurants (with filters) |
-| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/restaurant/:id` | Get restaurant by ID |
-| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/restaurant` | Create restaurant (owner only) |
-| ![PUT](https://img.shields.io/badge/METHOD-PUT-blue) | `/api/restaurant/:id` | Update restaurant (owner only) |
-| ![DELETE](https://img.shields.io/badge/METHOD-DELETE-red) | `/api/restaurant/:id` | Delete restaurant (owner only) |
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/restaurants` | Get all restaurants (with filters) |
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/restaurants/:id` | Get restaurant by ID |
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/restaurants` | Create restaurant (owner only) |
+| ![PUT](https://img.shields.io/badge/METHOD-PUT-blue) | `/api/restaurants/:id` | Update restaurant (owner only) |
+| ![DELETE](https://img.shields.io/badge/METHOD-DELETE-red) | `/api/restaurants/:id` | Delete restaurant (owner only) |
+
+
+### 🏪 Dining Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/dinings` | Get all dinings (with filters) |
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/dinings/:id` | Get dinings by ID |
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/dinings` | Create dinings (owner only) |
+| ![PUT](https://img.shields.io/badge/METHOD-PUT-blue) | `/api/dinings/:id` | Update dinings (owner only) |
+| ![DELETE](https://img.shields.io/badge/METHOD-DELETE-red) | `/api/dinings/:id` | Delete dinings (owner only) |
 
 ### 📅 Reservation Endpoints
 
@@ -188,8 +199,8 @@ stripe listen --forward-to localhost:5000/api/reservation/stripe-webhook
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/review/restaurant/:id` | Get restaurant reviews |
-| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/review` | Create new review |
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/reviews/dinings/:id` | Get restaurant reviews |
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/reviews` | Create new review |
 
 ## 📂 Project Structure
 
@@ -306,7 +317,7 @@ Create `Client/public/_redirects`:
 - ✅ Review browser network tab for auth headers
 
 ### Netlify Build Problems
-- ✅ Ensure folder name is "Client" not "Cient"
+- ✅ Ensure folder name is "Client"
 - ✅ Verify build command: `npm run build`
 - ✅ Check all environment variables are set
 - ✅ Add `_redirects` file for SPA routing
