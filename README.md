@@ -1,137 +1,141 @@
-# Restaurant Reservation Platform
+# 🍽️ Restaurant Reservation Platform
 
-A full-stack MERN application for restaurant reservations with real-time booking, payment processing, and role-based dashboards.
+![MongoDB](https://img.shields.io/badge/MongoDB-5.0+-47A248?logo=mongodb&logoColor=white)
+![React](https://img.shields.io/badge/React-18+-61DAFB?logo=react&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-16+-339933?logo=node.js&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-Payment-008CDD?logo=stripe&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-Media-4285F4?logo=cloudinary&logoColor=white)
 
-## 🚀 Features
+A complete restaurant reservation solution with real-time booking, payment processing, and role-based dashboards built with MERN stack.
 
-### Core Features
-- **User Management**: Registration, login, JWT authentication with persistent sessions
-- **Restaurant Management**: CRUD operations with image uploads via Cloudinary
-- **Dining Areas**: Multiple areas per restaurant with capacity management
-- **Advanced Search & Filters**: Cuisine type, guest count, features, dietary options, ambiance, availability
-- **Real-time Reservations**: Complete booking lifecycle with status tracking
-- **Payment Processing**: Stripe integration with test mode support
-- **Reviews System**: Customer feedback and ratings
-- **Smart Recommendations**: Based on recent search preferences
+## 🌐 Live Demos
+- **Frontend**: [restaurant-platform.netlify.app](https://restaurant-platform.netlify.app)
+- **Backend API**: [restaurant-api.onrender.com](https://restaurant-api.onrender.com)
 
-### User Roles
-- **Customer**: Browse, search, book, review restaurants
-- **Restaurant Owner**: Manage restaurants, dining areas, view bookings
-- **Admin**: System-wide management and oversight
+## 📌 Table of Contents
+- [Features](#✨-features)
+- [Technologies](#🛠️-technologies)
+- [Getting Started](#🚀-getting-started)
+- [API Documentation](#📚-api-documentation)
+- [Environment Variables](#⚙️-environment-variables)
+- [Deployment](#🌐-deployment)
+- [Troubleshooting](#🐛-troubleshooting)
+- [Contributing](#🤝-contributing)
+- [License](#📜-license)
 
-## 🛠️ Tech Stack
+## ✨ Features
 
-**Frontend:**
-- React 18 with Vite
-- React Router for navigation
-- Axios for API calls
-- Context API (useApp) for state management
-- Tailwind CSS / styled-components for styling
+### 🍴 Core Restaurant Features
+- 📋 Complete restaurant CRUD operations
+- 🖼️ Image uploads via Cloudinary integration
+- 🏢 Multi-dining area management with capacity control
+- 🔍 Advanced search & filtering system
+- ⭐ Customer reviews and ratings system
+- 🤖 Smart recommendations based on user preferences
 
-**Backend:**
-- Node.js + Express.js
-- MongoDB with Mongoose ODM
-- JWT authentication
-- Cloudinary for image storage
-- Stripe for payment processing
+### 📅 Reservation Management
+- ⚡ Real-time booking system
+- 📊 Complete reservation lifecycle tracking
+- 💳 Secure payment processing with Stripe
+- 🔄 Auto-completion of past reservations
+- 📱 Mobile-friendly booking flow
 
-**Deployment:**
-- Frontend: Netlify/Vercel
-- Backend: Render
-- Database: MongoDB Atlas
+### 👥 User Management
+- 🔐 JWT authentication with persistent sessions
+- 👤 Role-based access control (Customer, Owner, Admin)
+- 🎯 Personalized user dashboards
+- 🔒 Secure user registration and login
 
-## 📁 Project Structure
+## 🛠️ Technologies
 
-```
-Restaurant-Reservation-Platform/
-├── Client/                    # React frontend
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── context/
-│   │   └── App.jsx
-│   ├── public/
-│   └── package.json
-├── Server/                    # Node.js backend
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   └── index.js
-└── README.md
-```
+**Frontend**:
+- React 18 with Vite - Modern UI framework
+- React Router - Client-side routing
+- Context API - State management
+- TailwindCSS - Utility-first styling
+- Axios - HTTP client
 
-## ⚙️ Local Development Setup
+**Backend**:
+- Node.js - Runtime environment
+- Express.js - Web framework
+- MongoDB - NoSQL database
+- Mongoose - ODM for MongoDB
+- JWT - Authentication tokens
+- Stripe - Payment processing
+- Cloudinary - Image storage and optimization
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v16+)
-- MongoDB (local or Atlas)
-- Stripe account (test mode)
-- Cloudinary account
+- Node.js ≥ v16
+- MongoDB (Local or Atlas)
+- Stripe Account (Test Mode)
+- Cloudinary Account
+- Git
 
-### 1. Clone Repository
+### 📦 Installation
 ```bash
+# Clone repository
 git clone https://github.com/SGMohan/Restaurant-Reservation-Platform.git
 cd Restaurant-Reservation-Platform
-```
 
-### 2. Backend Setup
-```bash
+# Install backend dependencies
 cd Server
+npm install
+
+# Install frontend dependencies
+cd ../Client
 npm install
 ```
 
-Create `.env` in Server directory:
-```env
-# Database
-MONGO_URI=mongodb://localhost:27017/restaurant-reservation
-# or MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/restaurant-reservation
+### ⚙️ Environment Configuration
 
-# JWT
+#### Backend (.env in Server directory)
+```env
+# Database Configuration
+MONGO_URI=mongodb://localhost:27017/restaurant-reservation
+
+# JWT Authentication
 JWT_SECRET=your-super-secret-jwt-key-here
 JWT_EXPIRES_IN=7d
 
-# Cloudinary
+# Cloudinary Configuration
 CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
 CLOUDINARY_API_KEY=your-cloudinary-api-key
 CLOUDINARY_API_SECRET=your-cloudinary-api-secret
 
-# Stripe
+# Stripe Payment
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_from_stripe_cli
 
-# Server
+# Server Configuration
 PORT=5000
 NODE_ENV=development
 
-# CORS
+# CORS Configuration
 CLIENT_URL=http://localhost:5173
 ```
 
-Start backend server:
-```bash
-npm run dev
-```
-
-### 3. Frontend Setup
-```bash
-cd Client
-npm install
-```
-
-Create `.env` in Client directory:
+#### Frontend (.env in Client directory)
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-Start frontend:
+### 🚀 Start Development Servers
 ```bash
+# Start backend server
+cd Server
+npm run dev
+
+# Start frontend (in new terminal)
+cd Client
 npm run dev
 ```
 
-### 4. Stripe Setup for Testing
+### 💳 Stripe Setup for Testing
 
-#### Install Stripe CLI
+1. **Install Stripe CLI:**
 ```bash
 # macOS
 brew install stripe/stripe-cli/stripe
@@ -139,142 +143,184 @@ brew install stripe/stripe-cli/stripe
 # Windows/Linux - download from https://stripe.com/docs/stripe-cli
 ```
 
-#### Forward webhooks to local server
+2. **Forward webhooks to local server:**
 ```bash
 stripe login
 stripe listen --forward-to localhost:5000/api/reservation/stripe-webhook
 ```
 
-Copy the webhook signing secret (starts with `whsec_`) to your Server `.env` file as `STRIPE_WEBHOOK_SECRET`.
-
-#### Test Payment Cards
+3. **Test Payment Cards:**
 - **Success**: `4242424242424242`
 - **Decline**: `4000000000000002`
 - **3D Secure**: `4000000000003220`
 - Use any future date for expiry, any 3-digit CVC
 
-## 🔌 API Overview
+## 📚 API Documentation
 
-### Authentication
+### 🔐 Authentication Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/auth/register` | Register new user |
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/auth/login` | User login |
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/auth/me` | Get current user profile |
+
+### 🏪 Restaurant Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/restaurant` | Get all restaurants (with filters) |
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/restaurant/:id` | Get restaurant by ID |
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/restaurant` | Create restaurant (owner only) |
+| ![PUT](https://img.shields.io/badge/METHOD-PUT-blue) | `/api/restaurant/:id` | Update restaurant (owner only) |
+| ![DELETE](https://img.shields.io/badge/METHOD-DELETE-red) | `/api/restaurant/:id` | Delete restaurant (owner only) |
+
+### 📅 Reservation Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/reservation` | Get user reservations |
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/reservation` | Create new reservation |
+| ![PUT](https://img.shields.io/badge/METHOD-PUT-blue) | `/api/reservation/:id/status` | Update reservation status |
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/reservation/stripe-webhook` | Stripe webhook handler |
+
+### ⭐ Review Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| ![GET](https://img.shields.io/badge/METHOD-GET-brightgreen) | `/api/review/restaurant/:id` | Get restaurant reviews |
+| ![POST](https://img.shields.io/badge/METHOD-POST-yellow) | `/api/review` | Create new review |
+
+## 📂 Project Structure
+
 ```
-POST /api/auth/register    # User registration
-POST /api/auth/login       # User login
-GET  /api/auth/me          # Get current user
+Restaurant-Reservation-Platform/
+├── Server/                    # Node.js backend
+│   ├── controllers/          # Route controllers
+│   ├── models/              # MongoDB models
+│   ├── routes/              # API routes
+│   ├── middleware/          # Auth & validation middleware
+│   ├── .env                 # Environment variables
+│   └── index.js             # Main server file
+│
+├── Client/                   # React frontend
+│   ├── public/              # Static files
+│   ├── src/
+│   │   ├── components/      # React components
+│   │   ├── pages/           # Page components
+│   │   ├── context/         # Context providers
+│   │   ├── App.jsx          # Main app component
+│   │   └── main.jsx         # Entry point
+│   └── .env                 # Frontend environment variables
+│
+└── README.md
 ```
 
-### Restaurants
-```
-GET    /api/restaurant              # Get all restaurants (with filters)
-GET    /api/restaurant/:id          # Get restaurant by ID
-POST   /api/restaurant              # Create restaurant (owner only)
-PUT    /api/restaurant/:id          # Update restaurant (owner only)
-DELETE /api/restaurant/:id          # Delete restaurant (owner only)
-```
+## 📊 Reservation Status Flow
 
-### Reservations
-```
-GET  /api/reservation              # Get user reservations
-POST /api/reservation              # Create reservation
-PUT  /api/reservation/:id/status   # Update reservation status
-POST /api/reservation/stripe-webhook # Stripe webhook handler
-```
-
-### Reviews
-```
-GET  /api/review/restaurant/:id    # Get restaurant reviews
-POST /api/review                   # Create review
-```
-
-## 📊 Reservation Lifecycle
-
-### Status Flow
+### Status Lifecycle
 1. **Pending** → Initial reservation created
 2. **Paid** → Payment confirmed via Stripe webhook
 3. **Upcoming** → Confirmed reservation (manual/auto transition)
 4. **Completed** → Past reservation (auto-completed after reservation time)
 5. **Cancelled** → User or restaurant cancellation
 
-### Auto-Completion
-- Reservations automatically transition from "Upcoming" to "Completed" when the reservation date/time has passed
-- Runs on server startup and during status checks
+## 🌐 Deployment
 
-## 🚀 Deployment
+### 🖥️ Backend Deployment on Render
 
-### Backend (Render)
-1. Create new Web Service on Render
-2. Connect GitHub repository
-3. Set build command: `npm install`
-4. Set start command: `npm start`
-5. Add environment variables from `.env`
-6. Update `CLIENT_URL` to your frontend domain
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
-### Frontend (Netlify)
-1. Build locally: `cd Client && npm run build`
-2. Deploy `dist` folder to Netlify
-3. **Important**: Ensure build folder is named "Client" not "Cient"
-4. Add environment variables in Netlify dashboard
-5. Configure redirects for SPA:
+#### ⚙️ Render Configuration
+1. **Service Type**: Web Service
+2. **Runtime**: Node.js 16+
+3. **Build Command**: `npm install`
+4. **Start Command**: `npm start`
+5. **Auto-Deploy**: Enabled on Git push to `main` branch
 
+#### 📦 Environment Variables (Render Dashboard)
+```env
+# Server Configuration
+PORT=10000
+NODE_ENV=production
+
+# Database Configuration
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/restaurant-reservation?retryWrites=true&w=majority
+
+# JWT Authentication
+JWT_SECRET=your_strong_secret_key_here
+JWT_EXPIRES_IN=7d
+
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+
+# Stripe Configuration
+STRIPE_SECRET_KEY=sk_live_your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+
+# CORS Configuration
+CLIENT_URL=https://restaurant-platform.netlify.app
+```
+
+### 🎨 Frontend Deployment on Netlify
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start)
+
+#### ⚙️ Netlify Configuration
+1. **Site Type**: Static Site
+2. **Build Command**: `npm run build`
+3. **Publish Directory**: `dist/`
+4. **Auto-Deploy**: Enabled on Git push to `main` branch
+
+#### 📦 Environment Variables (Netlify Dashboard)
+```env
+VITE_API_URL=https://restaurant-api.onrender.com/api
+```
+
+#### 🔄 SPA Routing Setup
 Create `Client/public/_redirects`:
 ```
 /*    /index.html   200
 ```
 
-### CORS Configuration
-Update backend CORS settings for production:
-```javascript
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://your-netlify-app.netlify.app",
-    "https://your-custom-domain.com"
-  ],
-  credentials: true
-}));
-```
-
 ## 🐛 Troubleshooting
 
-### Stripe Webhook 404 Error
-- [ ] Verify webhook endpoint: `/api/reservation/stripe-webhook`
-- [ ] Ensure Stripe CLI is forwarding to correct port
-- [ ] Check `STRIPE_WEBHOOK_SECRET` in server `.env`
-- [ ] Verify webhook handler uses `express.raw()` middleware
+### Stripe Webhook Issues
+- ✅ Verify webhook endpoint: `/api/reservation/stripe-webhook`
+- ✅ Check `STRIPE_WEBHOOK_SECRET` in environment variables
+- ✅ Ensure webhook handler uses `express.raw()` middleware
+- ✅ Confirm Stripe CLI is forwarding to correct port
 
-### CORS Issues
-- [ ] Add frontend domain to backend CORS origins
-- [ ] Include `credentials: true` in CORS config
-- [ ] Check `CLIENT_URL` environment variable
-- [ ] Verify frontend is making requests to correct API URL
+### CORS Configuration
+- ✅ Add frontend domain to backend CORS origins
+- ✅ Include `credentials: true` in CORS config
+- ✅ Verify `CLIENT_URL` environment variable
+- ✅ Check API requests are going to correct backend URL
 
-### Persistent Login Issues
-- [ ] Check JWT secret consistency
-- [ ] Verify token storage in localStorage/cookies
-- [ ] Confirm JWT expiry settings
-- [ ] Check browser network tab for auth headers
+### Authentication Issues
+- ✅ Verify JWT secret consistency across environments
+- ✅ Check token storage in localStorage
+- ✅ Confirm JWT expiry settings
+- ✅ Review browser network tab for auth headers
 
-### Netlify Build Errors
-- [ ] Verify folder name is "Client" not "Cient"
-- [ ] Check build command: `npm run build`
-- [ ] Ensure all environment variables are set
-- [ ] Add `_redirects` file for SPA routing
-
-### Payment Processing
-- [ ] Confirm Stripe keys (public/secret) are correct
-- [ ] Check webhook secret matches Stripe CLI output
-- [ ] Verify test card numbers
-- [ ] Ensure raw body parsing for webhook endpoint
+### Netlify Build Problems
+- ✅ Ensure folder name is "Client" not "Cient"
+- ✅ Verify build command: `npm run build`
+- ✅ Check all environment variables are set
+- ✅ Add `_redirects` file for SPA routing
 
 ## 🗺️ Roadmap
 
-- [ ] Email notifications for booking confirmations
-- [ ] SMS reminders via Twilio
-- [ ] Advanced analytics dashboard
-- [ ] Multi-language support
-- [ ] Mobile app development
-- [ ] Table management system
-- [ ] Loyalty program integration
-- [ ] Social media login (Google/Facebook)
+- 📧 Email notifications for booking confirmations
+- 📱 SMS reminders via Twilio integration
+- 📊 Advanced analytics dashboard
+- 🌍 Multi-language support
+- 📱 Mobile app development
+- 🍽️ Table management system
+- 🎁 Loyalty program integration
+- 🔗 Social media login (Google/Facebook)
 
 ## 🤝 Contributing
 
@@ -290,7 +336,7 @@ app.use(cors({
 - Add tests for new features
 - Update documentation as needed
 
-## 📄 License
+## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
