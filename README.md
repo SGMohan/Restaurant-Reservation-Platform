@@ -11,7 +11,7 @@ A complete restaurant reservation solution with real-time booking, payment proce
 
 ## 🌐 Live Demos
 - **Frontend**: [restaurant-platform.netlify.app](https://dinearea.netlify.app)
-- **Backend API**: [restaurant-api.onrender.com]([https://restaurant-api.onrender.com](https://restaurant-reservation-platform.onrender.com))
+- **Backend API**: [restaurant-api.onrender.com](https://restaurant-reservation-platform.onrender.com/)
 
 ## 📌 Table of Contents
 - [Features](#✨-features)
