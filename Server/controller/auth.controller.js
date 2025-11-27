@@ -157,16 +157,18 @@ AuthRouter.post("/forgot-password", async (req, res) => {
     );
 
     // Construct password reset URL for frontend
-    const RESET_URL = `${process.env.FRONTEND_URL
-      }/reset-password?token=${resetToken}&email=${encodeURIComponent(
-        user.email
-      )}`;
+    const RESET_URL = `${
+      process.env.FRONTEND_URL
+    }/reset-password?token=${resetToken}&email=${encodeURIComponent(
+      user.email
+    )}`;
 
     try {
+      // Send password reset email using nodemailer
       await sendEmail({
         from: {
-          name: "DineArea Security",
-          address: process.env.EMAIL_USER,
+          name: process.env.EMAIL_FROM_NAME || "DineArea Security",
+          address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER,
         },
         to: user.email,
         subject: "Password Reset Request for Your DineArea Account",
@@ -187,14 +189,61 @@ The DineArea Team`.trim(),
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DineArea Password Reset</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0; margin-bottom: 25px; }
-        .logo { font-size: 24px; font-weight: bold; color: #000000; margin-bottom: 10px; }
-        .content { background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0; }
-        .button { display: inline-block; background-color: #2b6cb0; color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 15px 0; }
-        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 12px; text-align: center; }
-        .warning { background-color: #fffaf0; border-left: 4px solid #dd6b20; padding: 12px; margin: 20px 0; border-radius: 0 4px 4px 0; }
-        .details { margin: 15px 0; line-height: 1.8; }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 25px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            background-color: #2b6cb0;
+              color: white !important;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+        }
+        .warning {
+            background-color: #fffaf0;
+            border-left: 4px solid #dd6b20;
+            padding: 12px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .details {
+            margin: 15px 0;
+            line-height: 1.8;
+        }
     </style>
 </head>
 <body>
@@ -220,7 +269,9 @@ The DineArea Team`.trim(),
         <div class="details">
             <p><strong>Email:</strong> ${user.email}</p>
             <p><strong>Request Time:</strong> ${new Date().toLocaleString()}</p>
-            <p><strong>Expiration:</strong> ${new Date(Date.now() + 15 * 60000).toLocaleString()}</p>
+            <p><strong>Expiration:</strong> ${new Date(
+              Date.now() + 15 * 60000
+            ).toLocaleString()}</p>
         </div>
     </div>
     
@@ -233,25 +284,28 @@ The DineArea Team`.trim(),
     </div>
 </body>
 </html>`,
+        headers: {
+          "X-Priority": "1",
+          Importance: "high",
+          "X-MSMail-Priority": "High",
+          "X-Mailer": "Nodemailer",
+        },
       });
-
-      return res.status(200).json({
-        message: "Password reset link sent to your email",
-        success: true,
-        data: { email: user.email },
-      });
-    } catch (emailError) {
-      console.error("Email sending error:", emailError);
-  
-      // Don't reveal the actual error to the client for security
-      return res.status(500).json({
-        message: "Unable to send password reset email at this time. Please try again later.",
-        success: false,
-      });
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
     }
+
+    return res.status(200).json({
+      message: "Password reset link sent to your email",
+      success: true,
+      data: {
+        email: user.email,
+      },
+    });
   } catch (error) {
+    console.error("Email sending error:", error);
     return res.status(500).json({
-      message: "Password reset request failed due to server error",
+      message: "Password reset service unavailable",
       success: false,
       error: error.message,
     });
