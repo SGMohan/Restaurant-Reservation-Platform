@@ -167,8 +167,8 @@ AuthRouter.post("/forgot-password", async (req, res) => {
       // Send password reset email using nodemailer
       await sendEmail({
         from: {
-          name: process.env.EMAIL_FROM_NAME || "DineArea Security",
-          address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER,
+          name: "DineArea Security",
+          address: process.env.EMAIL_USER,
         },
         to: user.email,
         subject: "Password Reset Request for Your DineArea Account",
