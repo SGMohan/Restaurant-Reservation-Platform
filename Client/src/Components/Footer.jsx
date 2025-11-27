@@ -11,9 +11,9 @@ const Footer = () => {
         {/* Company info and social media */}
         <div className="max-w-80">
           <img
-            src={assets.logoBlack}
-            alt="logoBlack"
-            className="mb-4 h-8 md:h-9"
+            src={assets.logo}
+            alt="logo"
+            className="mb-4 h-8 md:h-9 invert "
           />
           <p className="text-sm">
             Discover our curated selection of exceptional restaurants around the
