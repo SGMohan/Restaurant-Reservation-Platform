@@ -86,23 +86,20 @@ const AuthModal = ({
           setError(res.data.message || "Login failed");
         }
       } else if (view === "forgot") {
-        // Handle password reset request
+        // Handle password reset request - FIXED: Don't treat 400 as error
         const res = await axios.post(`${BACKEND_URL}/auth/forgot-password`, {
           email: resetEmailInput,
         });
 
-        if (res.data.success) {
-          setView("check-email");
-          setError(null);
-        } else {
-          setView("check-email");
-          setError(null);
-        }
+        // Always show success message for security (even if email doesn't exist)
+        setView("check-email");
+        setError(null);
       }
     } catch (error) {
       console.error("Authentication error:", error);
 
       if (view === "forgot") {
+        // For forgot password, always show success message for security
         setView("check-email");
         setError(null);
       } else {
