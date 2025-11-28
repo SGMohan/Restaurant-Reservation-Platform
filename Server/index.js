@@ -13,9 +13,6 @@ const app = express();
 connectDB();
 connectCloudinary();
 
-// Regular JSON middleware for all other routes
-app.use(express.json());
-
 
 app.use(
   cors({
@@ -42,7 +39,8 @@ app.use(
   }
 );
 
-
+// Regular JSON middleware for all other routes
+app.use(express.json());
 
 // Routes
 app.use("/auth", AuthRouter);
