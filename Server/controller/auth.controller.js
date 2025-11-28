@@ -3,8 +3,9 @@ const UserModel = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 const { verifyToken } = require("../middleware/auth.middleware");
-const sendMail = require("../config/resend");
+const sendEmail = require("../config/nodemailer");
 
 // Health check endpoint to verify server is running
 AuthRouter.get("/", async (_, res) => {
@@ -163,11 +164,24 @@ AuthRouter.post("/forgot-password", async (req, res) => {
     )}`;
 
     try {
-      // Send password reset email using Resend
-      await sendMail({
-        from: process.env.EMAIL_FROM_ADDRESS,
+      // Send password reset email using nodemailer
+      await sendEmail({
+        from: {
+          name: "DineArea Security",
+          address: process.env.EMAIL_USER,
+        },
         to: user.email,
         subject: "Password Reset Request for Your DineArea Account",
+        text: `Dear ${user.name || "Valued Guest"},
+
+We received a request to reset your DineArea account password. Please use this link to proceed:
+
+${RESET_URL}
+
+This link expires in 15 minutes. If you didn't make this request, please contact our support team immediately.
+
+Best regards,
+The DineArea Team`.trim(),
         html: `<!DOCTYPE html>
 <html>
 <head>
@@ -204,7 +218,7 @@ AuthRouter.post("/forgot-password", async (req, res) => {
         .button {
             display: inline-block;
             background-color: #2b6cb0;
-            color: white !important;
+              color: white !important;
             padding: 12px 24px;
             text-decoration: none;
             border-radius: 4px;
@@ -270,6 +284,12 @@ AuthRouter.post("/forgot-password", async (req, res) => {
     </div>
 </body>
 </html>`,
+        headers: {
+          "X-Priority": "1",
+          Importance: "high",
+          "X-MSMail-Priority": "High",
+          "X-Mailer": "Nodemailer",
+        },
       });
     } catch (error) {
       console.error("Error sending password reset email:", error);
