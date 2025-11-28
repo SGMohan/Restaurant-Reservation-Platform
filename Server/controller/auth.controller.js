@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const { verifyToken } = require("../middleware/auth.middleware");
-// const sendEmail = require("../config/nodemailer");
-const sendMail = require("../config/resend");
+const sendEmail = require("../config/nodemailer");
+
 
 // Health check endpoint to verify server is running
 AuthRouter.get("/", async (_, res) => {
@@ -166,7 +166,7 @@ AuthRouter.post("/forgot-password", async (req, res) => {
 
     try {
       // Send password reset email using nodemailer
-      await sendMail({
+      await sendEmail({
         from: {
           name: "DineArea Security",
           address: process.env.EMAIL_USER,
