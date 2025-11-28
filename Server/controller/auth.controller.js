@@ -165,7 +165,7 @@ AuthRouter.post("/forgot-password", async (req, res) => {
     try {
       // Send password reset email using Resend
       await sendMail({
-        from: "DineArea Security <onboarding@resend.dev>",
+        from: `DineArea Security <no-reply@updates.mydomain.com>`,
         to: user.email,
         subject: "Password Reset Request for Your DineArea Account",
         html: `<!DOCTYPE html>
