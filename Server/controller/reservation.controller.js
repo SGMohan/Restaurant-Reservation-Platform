@@ -190,7 +190,7 @@ ReservationRouter.post("/stripe-webhook", async (req, res) => {
 
           if (populatedBooking?.user?.email) {
             await sendEmail({
-              from: `DineArea Security <no-reply@updates.mydomain.com>`, // Updated for Resend format
+              from: process.env.EMAIL_FROM_ADDRESS, // Updated for Resend format
               to: populatedBooking.user.email,
               subject: `Payment Confirmed - ${populatedBooking.dining.restaurant.name}`,
               html: `
