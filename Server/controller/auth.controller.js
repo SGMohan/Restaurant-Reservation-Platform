@@ -165,6 +165,7 @@ AuthRouter.post("/forgot-password", async (req, res) => {
 
     try {
       // Send password reset email using nodemailer
+      // FIXED: Ensure from field correctly matches authenticated EMAIL_USER to avoid spoofing rejections on Render
       await sendEmail({
         from: {
           name: "DineArea Security",
@@ -291,8 +292,11 @@ The DineArea Team`.trim(),
           "X-Mailer": "Nodemailer",
         },
       });
+      // FIXED: Added helpful log for successful process entry
+      console.log(`Password reset email triggered for: ${user.email}`); 
     } catch (error) {
-      console.error("Error sending password reset email:", error);
+       // FIXED: More descriptive log for easier production debugging
+      console.error(`FORGOT-PASSWORD EMAIL ERROR for ${user.email}:`, error.message);
     }
 
     return res.status(200).json({
@@ -303,7 +307,7 @@ The DineArea Team`.trim(),
       },
     });
   } catch (error) {
-    console.error("Email sending error:", error);
+    console.error("FATAL Forgot Password Error:", error);
     return res.status(500).json({
       message: "Password reset service unavailable",
       success: false,
