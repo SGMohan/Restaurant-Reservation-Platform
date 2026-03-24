@@ -1,11 +1,10 @@
 const express = require("express")
 const ReservationRouter = express.Router();
-
 const ReservationModel = require("../model/reservation.model");
 const DiningModel = require("../model/dining.model");
 const { verifyToken } = require("../middleware/auth.middleware");
 const RestaurantModel = require("../model/restaurant.model");
-const sendEmail = require("../config/nodemailer");
+const sendEmail = require("../config/sendgrid");
 const stripe = require("../config/stripe");
 
 // Create Stripe payment session

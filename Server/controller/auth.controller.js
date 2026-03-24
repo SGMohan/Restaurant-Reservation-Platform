@@ -3,9 +3,8 @@ const UserModel = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 const { verifyToken } = require("../middleware/auth.middleware");
-const sendEmail = require("../config/nodemailer");
+const sendEmail = require("../config/sendgrid");
 
 // Health check endpoint to verify server is running
 AuthRouter.get("/", async (_, res) => {
