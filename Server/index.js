@@ -8,11 +8,24 @@ const DiningRouter = require("./controller/dining.controller");
 const connectCloudinary = require("./config/cloudinary");
 const ReservationRouter = require("./controller/reservation.controller");
 const ReviewRouter = require("./controller/review.controller");
+const AiRouter = require("./controller/ai.controller");
+
+// Setup HTTP Server and Socket.io
+const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
 connectDB();
 connectCloudinary();
-
 
 app.use(
   cors({
@@ -22,12 +35,11 @@ app.use(
 );
 
 // IMPORTANT: Webhook route MUST come BEFORE express.json() middleware
-// This ensures the raw body is preserved for Stripe signature verification
 app.use(
   "/reservation/stripe-webhook",
   express.raw({
     type: "application/json",
-    limit: "10mb", // Increase limit if needed
+    limit: "10mb",
   }),
   (req, _, next) => {
     if (req.body && req.body.constructor === Buffer) {
@@ -48,15 +60,35 @@ app.use("/restaurants", RestaurantRouter);
 app.use("/dinings", DiningRouter);
 app.use("/reservation", ReservationRouter);
 app.use("/reviews", ReviewRouter);
+app.use("/chat", AiRouter); // Mount AI Assistant route
 
-app.get("/", (_, res) => {
-  return res.status(200).json({
-    message: "Welcome to the API",
+// Socket.io Handlers for AI Assistant
+io.on("connection", (socket) => {
+  console.log("A user connected to DineArea AI:", socket.id);
+
+  // Broadcast AI online status
+  socket.emit("ai_online", { status: "ready" });
+
+  // Handle typing indicator
+  socket.on("user_typing", (data) => {
+    // Notify about AI thinking/typing if it's a simulated or real flow
+    socket.emit("ai_typing", { typing: true });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
   });
 });
 
-app.listen(process.env.PORT, process.env.HOSTNAME, () => {
-  console.log(`http://${process.env.HOSTNAME}:${process.env.PORT}`);
+app.get("/", (_, res) => {
+  return res.status(200).json({
+    message: "DineArea API is live and healthy",
+  });
 });
+
+server.listen(process.env.PORT, process.env.HOSTNAME, () => {
+  console.log(`Server running at http://${process.env.HOSTNAME}:${process.env.PORT}`);
+});
+
 
 

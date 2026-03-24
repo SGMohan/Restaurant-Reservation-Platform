@@ -19,6 +19,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Manage from "./pages/admin/Manage";
 import AddDining from "./pages/admin/AddDining";
 import AuthModal from "./Components/AuthModal";
+import AIAssistant from "./Components/AIAssistant";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "./Context/AppContext";
 import Loader from "./Components/Loader";
@@ -89,8 +90,12 @@ const App = () => {
         resetSuccess={resetSuccess}
         resetEmail={resetEmail}
       />
+
+      {/* Floating AI Assistant */}
+      <AIAssistant />
     </div>
   );
 };
+
 
 export default App;
