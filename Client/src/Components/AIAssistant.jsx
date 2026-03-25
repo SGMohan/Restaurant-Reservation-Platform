@@ -75,7 +75,6 @@ const AIAssistant = () => {
   const [isOnline, setIsOnline] = useState(false);
   
   const [message, setMessage] = useState("");
-  const [sessionId, setSessionId] = useState(localStorage.getItem("ai_session_id"));
   const [chatHistory, setChatHistory] = useState([]);
   const [isTypingEffectActive, setIsTypingEffectActive] = useState(false);
   
@@ -98,10 +97,9 @@ const AIAssistant = () => {
     socket.on("ai_online", () => setIsOnline(true));
     socket.on("ai_typing", (data) => setIsAiTyping(data.typing));
     
-    if (sessionId) {
-      fetchHistory(sessionId);
-    }
 
+    localStorage.removeItem("ai_session_id");
+    
     return () => {
       socket.disconnect();
       clearTimeout(timer);
@@ -151,21 +149,30 @@ const AIAssistant = () => {
     }
   }, [isOpen]);
 
-  const fetchHistory = async (id) => {
-    try {
-      const res = await axios.get(`${BACKEND_URL}/chat/history/${id}`);
-      if (res.data.success && res.data.data.length > 0) {
-        // Mark existing history as already typed
-        const history = res.data.data.map(msg => {
-          typedSet.current.add(msg._id || msg.id);
-          return { ...msg, displayedContent: msg.content };
-        });
-        setChatHistory(history);
+  // Clear chat on logout or user change
+  useEffect(() => {
+    if (!user) {
+      setChatHistory([]);
+      typedSet.current.clear();
+      // Keep welcome message if open
+      if (isOpen) {
+        const welcomeId = "welcome-" + Date.now();
+        const content = `Hi! 👋 Welcome to DineArea. I can help you find restaurants, check your bookings, or guide you through our platform. What would you like to do?`;
+        
+        setChatHistory([{
+          id: welcomeId,
+          role: "assistant",
+          content: content,
+          displayedContent: "",
+          timestamp: new Date()
+        }]);
+        
+        setTimeout(() => typeMessage(welcomeId, content), 800);
       }
-    } catch (err) {
-      console.error("Failed to fetch chat history:", err);
     }
-  };
+  }, [user]);
+
+
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -182,14 +189,12 @@ const AIAssistant = () => {
     const currentMsg = message;
     setMessage("");
     
-    socket.emit("user_typing", { sessionId });
+    socket.emit("user_typing", { active: true });
     setIsAiTyping(true);
 
     try {
       const res = await axios.post(`${BACKEND_URL}/chat/send`, {
         message: currentMsg,
-        sessionId: sessionId,
-        userId: user?._id
       });
 
       if (res.data.success) {
@@ -202,10 +207,7 @@ const AIAssistant = () => {
           timestamp: new Date()
         };
         
-        if (!sessionId) {
-          setSessionId(res.data.sessionId);
-          localStorage.setItem("ai_session_id", res.data.sessionId);
-        }
+
 
         setChatHistory((prev) => [...prev, aiEntry]);
         typeMessage(newMsgId, res.data.data);

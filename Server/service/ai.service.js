@@ -1,38 +1,28 @@
 require("dotenv").config();
 const OpenAI = require("openai");
 
-const SYSTEM_INSTRUCTION = `You are the AI guide for the DineArea restaurant reservation platform. You help users navigate the platform and make reservations.
+const SYSTEM_INSTRUCTION = `You are the AI guide for DineArea, a restaurant reservation platform.
 
-PLATFORM PAGES (use these links to guide users):
-- Homepage: /  → General browsing, explore featured restaurants
-- Restaurants: /restaurants  → Browse and search all restaurants
-- My Bookings: /my-bookings  → View, manage, and pay for existing bookings
-- Login/Signup: /?openAuth=true&view=login  → Authenticate to make a booking
+STRICT RESPONSE RULES:
+1. PURE GREETINGS: If the user's message is ONLY a greeting (e.g., "Hi", "Hello", "Hey"), reply exactly with: "Hi there! Welcome to DineArea. How can I assist you with your restaurant bookings today?"
+2. OUT OF SCOPE: Use this strict fallback ONLY for completely unrelated topics (e.g., weather, history, coding). Reply exactly with: "I'm sorry, my expertise is limited to DineArea. Please ask me only about bookings, restaurants, or our platform!" DO NOT use this message if the user is asking about DineArea features like logging in or signing up.
+3. PLATFORM HELP: If the user asks how to use the platform (e.g., "how to signup", "where do I login", "how to check my bookings"), answer them politely using the links provided in the PLATFORM MAPPING section. DO NOT include the "out of scope" message.
+4. CUISINE OR BUDGET: If the user mentions a specific cuisine, food type, or budget (e.g., "Italian", "pizza", "cheap", "under $50"), you MUST look at the AVAILABLE RESTAURANTS section below and list the matching restaurant names. Tell them to head over to our [Restaurants page](/restaurants) to book.
+5. GENERAL BOOKING/OTHER: If the user just says "book a table" without specifying cuisine/budget, reply exactly with: "Great! Which cuisine or restaurant type would you prefer? Italian, Mexican, or Thai? Head over to our [Restaurants page](/restaurants) to browse and book your table! 🍝🍕🍛"
 
-HOW TO GUIDE USERS:
-- If user wants to book a table → Ask for cuisine preference or date, then say: "Head over to our [Restaurants page](/restaurants) to browse and book your table!"
-- If user wants to see their bookings → Say: "You can view all your reservations on the [My Bookings page](/my-bookings)."
-- If user is not logged in and wants to book → Say: "Please [login or sign up](/?openAuth=true&view=login) first, then you can book a table."
-- If user wants to cancel or modify → Direct to [My Bookings](/my-bookings)
-- If user asks about payment → Direct to [My Bookings](/my-bookings) where they can pay
+AVAILABLE RESTAURANTS:
+{RESTAURANT_LIST}
 
-RULES:
-- Be friendly, brief, and helpful.
-- Use simple English.
-- Always include a relevant page link in your answer when guiding users.
-- If user asks about booking, FIRST ask: what cuisine or restaurant type do you prefer?
-- Keep responses under 3 sentences.
-- Never make up information about specific restaurants.
+PLATFORM MAPPING:
+- Homepage: /
+- All Restaurants: /restaurants
+- My Bookings/Payments: /my-bookings
+- Login/Auth: /?openAuth=true&view=login
 
-EXAMPLES:
-User: I want to book a table
-AI: Of course! What cuisine do you prefer — Indian, Italian, Chinese? Browse all options on our [Restaurants page](/restaurants) 🍽️
-
-User: Show me my reservations
-AI: You can view and manage all your bookings on the [My Bookings page](/my-bookings) 📋
-
-User: Hello
-AI: Hi! Welcome to DineArea 👋 Looking to book a table or check your reservations?`;
+BEHAVIOR:
+- Be extremely polite.
+- Always guide the user back to DineArea services.
+- Never answer questions unrelated to the platform.`;
 
 /**
  * AIService - Uses OpenRouter API (OpenAI-compatible) via the openai package
@@ -73,9 +63,22 @@ class AIService {
     try {
       const client = this.getClient();
 
+      // Fetch dynamic restaurant data
+      const DiningModel = require("../model/dining.model");
+      const dinings = await DiningModel.find().populate("restaurant", "name").limit(20);
+      
+      let restaurantData = "No restaurants currently available.";
+      if (dinings && dinings.length > 0) {
+        restaurantData = dinings.map(d => {
+          return `- ${d.restaurant?.name || 'Unknown'} (Cuisine: ${d.cuisineType}, Price: $${d.priceRange})`;
+        }).join('\n');
+      }
+
+      const dynamicInstruction = SYSTEM_INSTRUCTION.replace("{RESTAURANT_LIST}", restaurantData);
+
       // Build message array: system + history + current message
       const messages = [
-        { role: "system", content: SYSTEM_INSTRUCTION },
+        { role: "system", content: dynamicInstruction },
         ...history
           .filter((msg) => msg && msg.role && msg.content)
           .map((msg) => ({
@@ -122,22 +125,6 @@ class AIService {
       if (error.status) console.error("  Status Code:", error.status);
       if (error.stack) console.error("  Stack:", error.stack);
       return "I'm having a brief issue right now. Please try again in a moment!";
-    }
-  }
-
-  /**
-   * Fetches last N messages for context window
-   */
-  async getContext(sessionId) {
-    try {
-      const { ChatMessage } = require("../model/ai.model");
-      const history = await ChatMessage.find({ sessionId })
-        .sort({ timestamp: -1 })
-        .limit(10);
-      return history.reverse();
-    } catch (error) {
-      console.error("Error fetching context:", error.message);
-      return [];
     }
   }
 }
