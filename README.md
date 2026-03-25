@@ -66,7 +66,7 @@ On the **Frontend**, a component-based architecture is utilized with functional 
 
 ---
 
-## 🚀 Installation & Setup
+## ⚙️ Installation & Setup
 
 ### 1. Clone the Repository
 ```bash
