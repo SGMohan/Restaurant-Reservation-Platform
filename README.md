@@ -174,7 +174,7 @@ npm run dev
 
 <div align="center">
   <img src="screenshots/Home_page.png" width="48%" alt="Home Page" />
-  <img src="screenshots/Recommedations.png" width="48%" alt="Recommedations" />
+  <img src="screenshots/Recommendations.png" width="48%" alt="Recommendations" />
   <br />
   <img src="screenshots/Dining Destinations.png" width="48%" alt="Dining Destinations" />
   <img src="screenshots/Offers_page.png" width="48%" alt="Offers Page" />
