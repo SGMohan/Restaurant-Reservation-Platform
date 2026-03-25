@@ -172,7 +172,18 @@ npm run dev
 > [!TIP]
 > Live Demo available at: **[DineArea Web](https://dinearea.netlify.app)**
 
-*Visual showcases of the landing page, search functionality, and the reservation dashboard will be placed here.*
+<div align="center">
+  <img src="screenshots/Home_page.png" width="48%" alt="Home Page" />
+  <img src="screenshots/Recommedations.png" width="48%" alt="Recommedations" />
+  <br />
+  <img src="screenshots/Dining Destinations.png" width="48%" alt="Dining Destinations" />
+  <img src="screenshots/Offers_page.png" width="48%" alt="Offers Page" />
+  <br />
+  <img src="screenshots/Reviews_page.png" width="48%" alt="Reviews Page" />
+  <img src="screenshots/Connect_page.png" width="48%" alt="Connect Page" />
+  <br />
+  <img src="screenshots/Footer_page.png" width="48%" alt="Footer Page" />
+</div>
 
 ---
 
